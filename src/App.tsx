@@ -9,6 +9,12 @@ const TodoApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [task, setTask] = useState<Task>({ name: "", id: 0 });
 
+  // TODO Task Management
+  //  [x] Add a new Task
+  //  [ ] Edit an existing task
+  //  [ ] Delete a task
+  //  [ ] Mark a task as complete/incomplete
+  //  [ ] View all tasks
   const handleAddTask = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
