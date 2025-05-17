@@ -14,6 +14,7 @@ const TASK_DEFAULTS = {
 const TaskApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [task, setTask] = useState<Task>(TASK_DEFAULTS);
+  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
 
   const shortId = shortUUID.generate();
 
@@ -23,9 +24,7 @@ const TaskApp = () => {
   //  [x] Delete a task
   //  [ ] Mark a task as complete/incomplete
   //  [ ] View all tasks
-  const handleAddTask = (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleAddTask = () => {
     if (task) {
       const newTask: Task = {
         id: shortId,
@@ -66,9 +65,32 @@ const TaskApp = () => {
     setTasks(updatedTasks);
   };
 
+  const toggleSelected = (id: string) => {
+    if (selectedTasks.includes(id)) {
+      setSelectedTasks((prev) => {
+        return prev.filter((i) => i != id);
+      });
+    } else {
+      setSelectedTasks((prev) => {
+        return [...prev, id];
+      });
+    }
+  };
+
+  const completeTasks = () => {
+    console.log("selectedTasks", selectedTasks);
+
+    const updatedTasks = tasks.map((task) =>
+      selectedTasks.includes(task.id) ? { ...task, completed: true } : task
+    );
+
+    setTasks(updatedTasks);
+    setSelectedTasks([]);
+  };
+
   return (
     <div className="w-6/12">
-      <form onSubmit={handleAddTask} className="mb-4">
+      <div className="mb-4 flex items-center">
         <input
           value={task.details}
           onChange={(e) =>
@@ -76,20 +98,34 @@ const TaskApp = () => {
           }
           className="border border-black text-black rounded-sm p-2 mr-2"
         />
-        <button className="text-white bg-indigo-700 rounded-sm p-2 px-4 ">
+        <button
+          onClick={handleAddTask}
+          className="text-white bg-indigo-700 rounded-sm p-2 px-4 mr-2 "
+        >
           Add
         </button>
-      </form>
+        <button
+          onClick={completeTasks}
+          className="text-white bg-green-700 rounded-sm p-2 px-4 self-end ml-auto"
+        >
+          Mark as Completed
+        </button>
+      </div>
       <ul>
-        {[...tasks].reverse().map((tsk) => {
-          return (
-            <TaskItem
-              onUpdateTask={handleUpdateTask}
-              onDeleteTask={handleDeleteTask}
-              task={tsk}
-            />
-          );
-        })}
+        {[...tasks]
+          .filter((task) => !task.completed)
+          .reverse()
+          .map((tsk) => {
+            return (
+              <TaskItem
+                onClick={() => toggleSelected(tsk.id)}
+                selected={selectedTasks.includes(tsk.id)}
+                onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
+                task={tsk}
+              />
+            );
+          })}
       </ul>
     </div>
   );
