@@ -15,7 +15,7 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
   const [taskName, setTaskName] = useState<string>("");
 
   useEffect(() => {
-    setTaskName(task.name);
+    setTaskName(task.details);
   }, [task]);
 
   const handleEditTask = () => {
@@ -34,7 +34,7 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
   const handleAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      if (taskName.trim() !== "" && task.name !== taskName) {
+      if (taskName.trim() !== "" && task.details !== taskName) {
         onUpdateTask({ ...task, ...{ name: taskName, updated: Date.now() } });
 
         setEditMode(false);
@@ -67,7 +67,7 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
           </button>
         )}
 
-        {!deleteMode && !editMode && <>{task.name}</>}
+        {!deleteMode && !editMode && <>{task.details}</>}
       </div>
       <button
         onClick={handleEditTask}

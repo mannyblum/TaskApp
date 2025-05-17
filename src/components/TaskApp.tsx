@@ -5,9 +5,10 @@ import TaskItem from "./TaskItem";
 
 const TASK_DEFAULTS = {
   id: "",
-  name: "",
+  details: "",
   created: Date.now(),
   updated: Date.now(),
+  completed: false,
 };
 
 const TaskApp = () => {
@@ -28,9 +29,10 @@ const TaskApp = () => {
     if (task) {
       const newTask: Task = {
         id: shortId,
-        name: task.name,
+        details: task.details,
         created: Date.now(),
         updated: Date.now(),
+        completed: false,
       };
 
       // add new task to array of tasks
@@ -68,9 +70,9 @@ const TaskApp = () => {
     <div className="w-6/12">
       <form onSubmit={handleAddTask} className="mb-4">
         <input
-          value={task.name}
+          value={task.details}
           onChange={(e) =>
-            setTask((prevTask) => ({ ...prevTask, name: e.target.value }))
+            setTask((prevTask) => ({ ...prevTask, details: e.target.value }))
           }
           className="border border-black text-black rounded-sm p-2 mr-2"
         />
@@ -79,7 +81,7 @@ const TaskApp = () => {
         </button>
       </form>
       <ul>
-        {tasks.map((tsk) => {
+        {[...tasks].reverse().map((tsk) => {
           return (
             <TaskItem
               onUpdateTask={handleUpdateTask}
