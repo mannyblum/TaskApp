@@ -12,17 +12,9 @@ type TodoItemProps = {
   task: Task;
   onUpdateTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
-  onClick: () => void;
-  selected: boolean;
 };
 
-const TaskItem = ({
-  task,
-  onUpdateTask,
-  onDeleteTask,
-  onClick,
-  selected,
-}: TodoItemProps) => {
+const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [deleteMode, setDeleteMode] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
@@ -59,7 +51,6 @@ const TaskItem = ({
   };
 
   const handleToggleCheck = () => {
-    console.log("toggle");
     setChecked((prevState) => !prevState);
 
     onUpdateTask({
@@ -80,10 +71,10 @@ const TaskItem = ({
       className={`relative
 
         text-black border border-indigo-900 rounded-sm p-2 mb-2 flex justify-between items-center 
-        ${selected ? "bg-blue-400" : "bg-white"}
    ${task.completed ? "opacity-50 bg-zinc-200 border-zinc-600" : ""}
         `}
     >
+      {/* ${selected ? "bg-blue-400" : "bg-white"} */}
       {/* {task.completed && (
         <hr
           className={`h-px w-[calc(100%+16px)] border-t-[1px] absolute translate-y-1/2 -ml-4
@@ -135,13 +126,13 @@ const TaskItem = ({
           e.stopPropagation();
           handleEditTask();
         }}
-        disabled={deleteMode || selected || task.completed}
+        disabled={deleteMode || task.completed}
         className={`disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed! border mr-2 rounded-sm p-2 hover:bg-indigo-400 active:bg-indigo-600 hover:text-white focus:outline-1 focus:outline-offset-1 focus:outline-indigo-300`}
       >
         {editMode ? <XIcon size={24} /> : <PencilIcon size={24} />}
       </button>
       <button
-        disabled={editMode || selected || task.completed}
+        disabled={editMode || task.completed}
         onClick={(e) => {
           e.stopPropagation();
           handleDeleteTask();

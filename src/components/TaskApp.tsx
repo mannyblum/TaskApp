@@ -5,9 +5,8 @@ import TaskItem from "./TaskItem";
 
 const TaskApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
-
   const [inputValue, setInputValue] = useState<string>("");
+  const [filterType, setFilterType] = useState<string>("all");
 
   const shortId = shortUUID.generate();
 
@@ -16,7 +15,7 @@ const TaskApp = () => {
   //  [x] Edit an existing task
   //  [x] Delete a task
   //  [x] Mark a task as complete/incomplete
-  //  [ ] View all tasks
+  //  [x] View all tasks
   const handleAddTask = (
     e:
       | React.MouseEvent<HTMLButtonElement>
@@ -62,25 +61,14 @@ const TaskApp = () => {
     setTasks(updatedTasks);
   };
 
-  const toggleSelected = (id: string) => {
-    if (selectedTasks.includes(id)) {
-      setSelectedTasks((prev) => {
-        return prev.filter((i) => i != id);
-      });
-    } else {
-      setSelectedTasks((prev) => {
-        return [...prev, id];
-      });
-    }
+  const clearCompletedTasks = () => {
+    setTasks((prevTasks) =>
+      prevTasks.filter((task) => task.completed !== true)
+    );
   };
 
-  const completeTasks = () => {
-    const updatedTasks = tasks.map((task) =>
-      selectedTasks.includes(task.id) ? { ...task, completed: true } : task
-    );
-
-    setTasks(updatedTasks);
-    setSelectedTasks([]);
+  const handleFilter = (type: string) => {
+    setFilterType(type);
   };
 
   return (
@@ -98,30 +86,77 @@ const TaskApp = () => {
         >
           Add
         </button>
-        <button
-          onClick={completeTasks}
-          className="text-white bg-green-700 rounded-sm p-2 px-4 self-end ml-auto"
-        >
-          Mark as Completed
-        </button>
       </div>
-      <ul>
-        {[...tasks]
-          // .filter((task) => !task.completed)
-          .reverse()
-          .map((tsk) => {
-            return (
-              <TaskItem
-                key={tsk.id}
-                onClick={() => toggleSelected(tsk.id)}
-                selected={selectedTasks.includes(tsk.id)}
-                onUpdateTask={handleUpdateTask}
-                onDeleteTask={handleDeleteTask}
-                task={tsk}
-              />
-            );
-          })}
-      </ul>
+      {tasks.length === 0 ? (
+        <div className="text-center font-black border text-black text-xs rounded-sm flex place-content-center p-2 px-4 mb-2">
+          No tasks
+        </div>
+      ) : (
+        <ul>
+          {[...tasks]
+            .filter((task) => {
+              if (filterType === "completed") {
+                return task.completed;
+              }
+
+              if (filterType === "active") {
+                return !task.completed;
+              }
+
+              return task;
+            })
+            .reverse()
+            .map((tsk) => {
+              return (
+                <TaskItem
+                  key={tsk.id}
+                  onUpdateTask={handleUpdateTask}
+                  onDeleteTask={handleDeleteTask}
+                  task={tsk}
+                />
+              );
+            })}
+        </ul>
+      )}
+      {tasks.length > 0 && (
+        <div className="border text-black text-xs rounded-sm flex justify-between items-center p-2 px-4">
+          <div>{tasks.filter((task) => !task.completed).length} items left</div>
+          <div>
+            <ul className="flex gap-4 cursor-pointer">
+              <li
+                className={`${
+                  filterType === "all" ? "text-green-800 font-black" : ""
+                } hover:font-black`}
+                onClick={() => handleFilter("all")}
+              >
+                All
+              </li>
+              <li
+                className={`${
+                  filterType === "active" ? "text-green-800 font-black" : ""
+                } hover:font-black`}
+                onClick={() => handleFilter("active")}
+              >
+                Active
+              </li>
+              <li
+                className={`${
+                  filterType === "completed" ? "text-green-800 font-black" : ""
+                } hover:font-black`}
+                onClick={() => handleFilter("completed")}
+              >
+                Completed
+              </li>
+            </ul>
+          </div>
+          <div
+            className="hover:font-black cursor-pointer"
+            onClick={clearCompletedTasks}
+          >
+            Clear Completed
+          </div>
+        </div>
+      )}
     </div>
   );
 };
