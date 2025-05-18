@@ -2,11 +2,14 @@ import type { Task } from "@/types/Task";
 import { useState } from "react";
 import shortUUID from "short-uuid";
 import TaskItem from "./TaskItem";
+import { ChevronDownIcon } from "@primer/octicons-react";
 
 const TaskApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [filterType, setFilterType] = useState<string>("all");
+  const [category, setCategory] = useState<string>("Categories");
+  const [isSelectOpen, setSelectOpen] = useState<boolean>(false);
 
   const shortId = shortUUID.generate();
 
@@ -83,6 +86,15 @@ const TaskApp = () => {
     setFilterType(type);
   };
 
+  const toggleOpenDropdown = () => {
+    setSelectOpen((prev) => !prev);
+  };
+
+  const handleSetCategory = (cat: string) => {
+    setCategory(cat);
+    setSelectOpen(false);
+  };
+
   return (
     <div className="w-6/12">
       <div className="mb-4 flex items-center">
@@ -94,10 +106,54 @@ const TaskApp = () => {
         />
         <button
           onClick={handleAddTask}
-          className="text-white bg-indigo-700 rounded-sm p-2 px-4 mr-2 "
+          className="text-white bg-indigo-700 border-2 border-black rounded-sm p-2 px-4 mr-2 "
         >
           Add
         </button>
+        <div className="w-full relative">
+          {/* <select
+            name="categories"
+            id="category-select"
+            className="block border-2 p-2 w-[100%] border-black text-black rounded-sm"
+          >
+            <option value="">Categories</option>
+            <option value="cat">cat</option>
+            <option value="dog">dog</option>
+            <option value="mouse">mouse</option>
+          </select> */}
+
+          <button
+            id="categories-button"
+            data-dropdown-toggle="dropdown-states"
+            onClick={toggleOpenDropdown}
+            className="mb-2 flex items-center mt-2 justify-between w-full hover:border-black! border-2 border-black text-black rounded-sm p-2 px-4 focus:shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+          >
+            {category}
+            <ChevronDownIcon size={16} className="text-black font-black" />
+          </button>
+          {isSelectOpen && (
+            <ul className="rounded-sm absolute top-3 left-0 bg-white mt-12 z-20 text-black w-full cursor-pointer border-2 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+              <li
+                onClick={() => handleSetCategory("Cats")}
+                className="border-b-2 border-b-black hover:bg-green-400 p-1 px-4"
+              >
+                Cat
+              </li>
+              <li
+                onClick={() => handleSetCategory("Dog")}
+                className="border-b-2 border-b-black hover:bg-green-500 p-1 px-4"
+              >
+                Dog
+              </li>
+              <li
+                onClick={() => handleSetCategory("Mouse")}
+                className="border-b-2 border-b-black hover:bg-green-500 p-1 px-4"
+              >
+                Mouse
+              </li>
+            </ul>
+          )}
+        </div>
       </div>
       {tasks.length === 0 ? (
         <div className="text-center font-black border text-black text-xs rounded-sm flex place-content-center p-2 px-4 mb-2">
