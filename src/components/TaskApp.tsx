@@ -2,7 +2,8 @@ import type { Task } from "@/types/Task";
 import { useState } from "react";
 import shortUUID from "short-uuid";
 import TaskItem from "./TaskItem";
-import { ChevronDownIcon } from "@primer/octicons-react";
+import { ChevronDownIcon, GearIcon } from "@primer/octicons-react";
+import Modal from "./common/Modal";
 
 const TaskApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -10,6 +11,7 @@ const TaskApp = () => {
   const [filterType, setFilterType] = useState<string>("all");
   const [category, setCategory] = useState<string>("Categories");
   const [isSelectOpen, setSelectOpen] = useState<boolean>(false);
+  const [isTaskModalOpen, setTaskModalOpen] = useState<boolean>(false);
 
   const shortId = shortUUID.generate();
 
@@ -51,6 +53,22 @@ const TaskApp = () => {
     setTasks((tasks) => [...tasks, newTask]);
 
     setInputValue("");
+  };
+
+  const handleAddTaskFromModal = (task: string) => {
+    console.log("incomingtask", task);
+
+    if (task.trim() === "") return; // Don't add empty strings
+
+    const newTask: Task = {
+      id: shortId,
+      details: task,
+      created: Date.now(),
+      updated: Date.now(),
+      completed: false,
+    };
+
+    setTasks((tasks) => [...tasks, newTask]);
   };
 
   const handleUpdateTask = (task: Task) => {
@@ -95,22 +113,29 @@ const TaskApp = () => {
     setSelectOpen(false);
   };
 
+  const handleOpenTaskModal = () => {
+    setTaskModalOpen(true);
+  };
+
   return (
     <div className="w-6/12">
-      <div className="mb-4 flex items-center">
-        <input
+      <div className="mb-4 flex items-center justify-between">
+        {/* <input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleAddTask}
           className="border border-black text-black rounded-sm p-2 mr-2"
-        />
+        /> */}
         <button
-          onClick={handleAddTask}
-          className="text-white bg-indigo-700 border-2 border-black rounded-sm p-2 px-4 mr-2 "
+          // onClick={handleAddTask}
+          onClick={handleOpenTaskModal}
+          className="
+                shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:border-black! hover:shadow-none hover:translate-0.5 
+          text-black bg-indigo-200 border-2 border-black rounded-sm p-2 px-4 mr-2 "
         >
-          Add
+          Add Task
         </button>
-        <div className="w-full relative">
+        <div className="w-48 relative">
           {/* <select
             name="categories"
             id="category-select"
@@ -126,7 +151,7 @@ const TaskApp = () => {
             id="categories-button"
             data-dropdown-toggle="dropdown-states"
             onClick={toggleOpenDropdown}
-            className="mb-2 flex items-center mt-2 justify-between w-full hover:border-black! border-2 border-black text-black rounded-sm p-2 px-4 focus:shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+            className="mb-2 flex items-center mt-2 justify-between w-full hover:border-black! border-2 border-black text-black rounded-sm p-2 px-4 shadow-[2px_2px_0px_rgba(0,0,0,1)]"
           >
             {category}
             <ChevronDownIcon size={16} className="text-black font-black" />
@@ -154,6 +179,12 @@ const TaskApp = () => {
             </ul>
           )}
         </div>
+        <button
+          id="settings"
+          className="text-black border-2 border-black hover:border-black! rounded-sm p-2 px-4 shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+        >
+          <GearIcon size={24} />
+        </button>
       </div>
       {tasks.length === 0 ? (
         <div className="text-center font-black border text-black text-xs rounded-sm flex place-content-center p-2 px-4 mb-2">
@@ -224,6 +255,12 @@ const TaskApp = () => {
             Clear Completed
           </div>
         </div>
+      )}
+      {isTaskModalOpen && (
+        <Modal
+          onClose={() => setTaskModalOpen(false)}
+          onAddTask={(task) => handleAddTaskFromModal(task)}
+        />
       )}
     </div>
   );

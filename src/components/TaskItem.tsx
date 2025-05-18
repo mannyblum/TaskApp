@@ -133,7 +133,7 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
           handleEdit(e);
         }}
         disabled={deleteMode || task.completed}
-        className={`disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed! border mr-2 rounded-sm p-2 hover:bg-indigo-400 active:bg-indigo-600 hover:text-white focus:outline-1 focus:outline-offset-1 focus:outline-indigo-300`}
+        className={`disabled:bg-gray-50 border-black hover:border-black! disabled:text-gray-500 disabled:cursor-not-allowed! border-2 mr-2 rounded-sm p-2 hover:bg-indigo-400 active:bg-indigo-600 hover:text-white shadow-[2px_2px_0px_rgba(0,0,0,1)]`}
       >
         {editMode ? <XIcon size={24} /> : <PencilIcon size={24} />}
       </button>
@@ -143,7 +143,7 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
           e.stopPropagation();
           handleDeleteTask();
         }}
-        className={`disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed! border rounded-sm p-2 text-white bg-red-600 hover:bg-red-800 active:bg-red-400 hover:text-white focus:outline-1 focus:outline-offset-1 focus:outline-red-300`}
+        className={`disabled:bg-gray-50 border-black hover:border-black! disabled:text-gray-500 disabled:cursor-not-allowed! border-2 rounded-sm p-2 text-white bg-red-600 hover:bg-red-800 active:bg-red-400 hover:text-white shadow-[2px_2px_0px_rgba(0,0,0,1)]`}
       >
         {deleteMode ? <XIcon size={24} /> : <TrashIcon size={24} />}
       </button>
