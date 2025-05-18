@@ -1,20 +1,13 @@
 import type { Task } from "@/types/Task";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import shortUUID from "short-uuid";
 import TaskItem from "./TaskItem";
 
-const TASK_DEFAULTS = {
-  id: "",
-  details: "",
-  created: Date.now(),
-  updated: Date.now(),
-  completed: false,
-};
-
 const TaskApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [task, setTask] = useState<Task>(TASK_DEFAULTS);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
+
+  const [inputValue, setInputValue] = useState<string>("");
 
   const shortId = shortUUID.generate();
 
@@ -22,24 +15,28 @@ const TaskApp = () => {
   //  [x] Add a new Task
   //  [x] Edit an existing task
   //  [x] Delete a task
-  //  [ ] Mark a task as complete/incomplete
+  //  [x] Mark a task as complete/incomplete
   //  [ ] View all tasks
-  const handleAddTask = () => {
-    if (task) {
-      const newTask: Task = {
-        id: shortId,
-        details: task.details,
-        created: Date.now(),
-        updated: Date.now(),
-        completed: false,
-      };
+  const handleAddTask = (
+    e:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if ("key" in e && e.key !== "Enter") return;
 
-      // add new task to array of tasks
-      setTasks([...tasks, newTask]);
+    if (inputValue.trim() === "") return; // Don't add empty strings
 
-      // clear task object
-      setTask(TASK_DEFAULTS);
-    }
+    const newTask: Task = {
+      id: shortId,
+      details: inputValue,
+      created: Date.now(),
+      updated: Date.now(),
+      completed: false,
+    };
+
+    setTasks((tasks) => [...tasks, newTask]);
+
+    setInputValue("");
   };
 
   const handleUpdateTask = (task: Task) => {
@@ -78,8 +75,6 @@ const TaskApp = () => {
   };
 
   const completeTasks = () => {
-    console.log("selectedTasks", selectedTasks);
-
     const updatedTasks = tasks.map((task) =>
       selectedTasks.includes(task.id) ? { ...task, completed: true } : task
     );
@@ -92,10 +87,9 @@ const TaskApp = () => {
     <div className="w-6/12">
       <div className="mb-4 flex items-center">
         <input
-          value={task.details}
-          onChange={(e) =>
-            setTask((prevTask) => ({ ...prevTask, details: e.target.value }))
-          }
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleAddTask}
           className="border border-black text-black rounded-sm p-2 mr-2"
         />
         <button
@@ -113,11 +107,12 @@ const TaskApp = () => {
       </div>
       <ul>
         {[...tasks]
-          .filter((task) => !task.completed)
+          // .filter((task) => !task.completed)
           .reverse()
           .map((tsk) => {
             return (
               <TaskItem
+                key={tsk.id}
                 onClick={() => toggleSelected(tsk.id)}
                 selected={selectedTasks.includes(tsk.id)}
                 onUpdateTask={handleUpdateTask}
