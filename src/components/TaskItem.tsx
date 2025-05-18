@@ -17,12 +17,12 @@ type TodoItemProps = {
 const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [deleteMode, setDeleteMode] = useState<boolean>(false);
-  const [taskName, setTaskName] = useState<string>("");
+  const [taskDetails, setTaskDetails] = useState<string>("");
 
   const [checked, setChecked] = useState<boolean>(false);
 
   useEffect(() => {
-    setTaskName(task.details);
+    setTaskDetails(task.details);
     setChecked(task.completed);
   }, [task]);
 
@@ -39,14 +39,20 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
     setDeleteMode(false);
   };
 
-  const handleEdit = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (taskName.trim() !== "" && task.details !== taskName) {
-        onUpdateTask({ ...task, ...{ name: taskName, updated: Date.now() } });
+  const handleEdit = (
+    e:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if ("key" in e && e.key !== "Enter") return;
 
-        setEditMode(false);
-      }
+    if (taskDetails.trim() !== "" && task.details !== taskDetails) {
+      onUpdateTask({
+        ...task,
+        ...{ details: taskDetails, updated: Date.now() },
+      });
+
+      setEditMode(false);
     }
   };
 
@@ -69,10 +75,9 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
     <li
       key={task.id}
       className={`relative
-
         text-black border border-indigo-900 rounded-sm p-2 mb-2 flex justify-between items-center 
-   ${task.completed ? "opacity-50 bg-zinc-200 border-zinc-600" : ""}
-        `}
+        ${task.completed ? "opacity-50 bg-zinc-200 border-zinc-600" : ""}
+      `}
     >
       {/* ${selected ? "bg-blue-400" : "bg-white"} */}
       {/* {task.completed && (
@@ -86,9 +91,9 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
           <input
             type="text"
             className="border text-black rounded-sm p-1 "
-            value={taskName}
+            value={taskDetails}
             onKeyDown={handleEdit}
-            onChange={(e) => setTaskName(e.target.value)}
+            onChange={(e) => setTaskDetails(e.target.value)}
           />
         )}
 
@@ -117,7 +122,7 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
                 />
               )}
             </div>
-            {task.details} - {task.completed ? "true" : "false"}
+            {task.details}
           </div>
         )}
       </div>
@@ -125,6 +130,7 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
         onClick={(e) => {
           e.stopPropagation();
           handleEditTask();
+          handleEdit(e);
         }}
         disabled={deleteMode || task.completed}
         className={`disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed! border mr-2 rounded-sm p-2 hover:bg-indigo-400 active:bg-indigo-600 hover:text-white focus:outline-1 focus:outline-offset-1 focus:outline-indigo-300`}
