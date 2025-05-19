@@ -3,11 +3,10 @@ import { useState } from "react";
 import shortUUID from "short-uuid";
 import TaskItem from "./TaskItem";
 import { ChevronDownIcon, GearIcon } from "@primer/octicons-react";
-import Modal from "./common/Modal";
+import Modal from "./modals/TaskModal";
 
 const TaskApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
   const [filterType, setFilterType] = useState<string>("all");
   const [category, setCategory] = useState<string>("Categories");
   const [isSelectOpen, setSelectOpen] = useState<boolean>(false);
@@ -33,31 +32,8 @@ const TaskApp = () => {
   // TODO: UI/UX Essentials
   //  [ ] Clear, responsive layout using CSS or a CSS framework (like Tailwind or Material UI)
   //  [ ] Basic styling with status indicators (e.g. strikethrough completed tasks)
-  const handleAddTask = (
-    e:
-      | React.MouseEvent<HTMLButtonElement>
-      | React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if ("key" in e && e.key !== "Enter") return;
-
-    if (inputValue.trim() === "") return; // Don't add empty strings
-
-    const newTask: Task = {
-      id: shortId,
-      details: inputValue,
-      created: Date.now(),
-      updated: Date.now(),
-      completed: false,
-    };
-
-    setTasks((tasks) => [...tasks, newTask]);
-
-    setInputValue("");
-  };
 
   const handleAddTaskFromModal = (task: string) => {
-    console.log("incomingtask", task);
-
     if (task.trim() === "") return; // Don't add empty strings
 
     const newTask: Task = {
@@ -120,14 +96,7 @@ const TaskApp = () => {
   return (
     <div className="w-6/12">
       <div className="mb-4 flex items-center justify-between">
-        {/* <input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleAddTask}
-          className="border border-black text-black rounded-sm p-2 mr-2"
-        /> */}
         <button
-          // onClick={handleAddTask}
           onClick={handleOpenTaskModal}
           className="
                 shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:border-black! hover:shadow-none hover:translate-0.5 
@@ -136,17 +105,6 @@ const TaskApp = () => {
           Add Task
         </button>
         <div className="w-48 relative">
-          {/* <select
-            name="categories"
-            id="category-select"
-            className="block border-2 p-2 w-[100%] border-black text-black rounded-sm"
-          >
-            <option value="">Categories</option>
-            <option value="cat">cat</option>
-            <option value="dog">dog</option>
-            <option value="mouse">mouse</option>
-          </select> */}
-
           <button
             id="categories-button"
             data-dropdown-toggle="dropdown-states"
@@ -259,7 +217,8 @@ const TaskApp = () => {
       {isTaskModalOpen && (
         <Modal
           onClose={() => setTaskModalOpen(false)}
-          onAddTask={(task) => handleAddTaskFromModal(task)}
+          onSubmit={(task) => handleAddTaskFromModal(task)}
+          onCancel={() => setTaskModalOpen(false)}
         />
       )}
     </div>
