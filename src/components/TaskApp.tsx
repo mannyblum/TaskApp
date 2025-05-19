@@ -1,9 +1,10 @@
 import type { Task } from "@/types/Task";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import shortUUID from "short-uuid";
 import TaskItem from "./TaskItem";
 import { ChevronDownIcon, GearIcon } from "@primer/octicons-react";
 import Modal from "./modals/TaskModal";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 const TaskApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -12,6 +13,8 @@ const TaskApp = () => {
 
   const [isSelectOpen, setSelectOpen] = useState<boolean>(false);
   const [isTaskModalOpen, setTaskModalOpen] = useState<boolean>(false);
+
+  const [lsTasks, setLSTasks] = useLocalStorage("tasks", "");
 
   const shortId = shortUUID.generate();
 
@@ -40,7 +43,7 @@ const TaskApp = () => {
   // [ ] Search tasks by name
 
   // TODO: Persistence
-  // [ ] Save tasks and categories in localStorage so they persist on refresh
+  // [x] Save tasks and categories in localStorage so they persist on refresh
   // [ ] Option to clear all tasks
 
   // TODO: Due Dates & Priorities
@@ -59,11 +62,18 @@ const TaskApp = () => {
       completed: false,
     };
 
-    setTasks((tasks) => [...tasks, newTask]);
+    // setTasks((tasks) => [...tasks, newTask]);
+    setLSTasks((prevTasks: Task[]) => [...prevTasks, newTask]);
   };
 
+  useEffect(() => {
+    if (lsTasks) {
+      setTasks(lsTasks);
+    }
+  }, [lsTasks]);
+
   const handleUpdateTask = (task: Task) => {
-    setTasks((prevTasks) => {
+    setLSTasks((prevTasks: Task[]) => {
       const existingTask = prevTasks.find((task) => task.id === task.id);
 
       if (existingTask && task.updated <= existingTask.updated) {
@@ -82,7 +92,8 @@ const TaskApp = () => {
   const handleDeleteTask = (taskId: string) => {
     const updatedTasks = tasks.filter((task) => task.id !== taskId);
 
-    setTasks(updatedTasks);
+    // setTasks(updatedTasks);
+    setLSTasks(updatedTasks);
   };
 
   const clearCompletedTasks = () => {
@@ -158,12 +169,12 @@ const TaskApp = () => {
             </ul>
           )}
         </div>
-        <button
+        {/* <button
           id="settings"
           className="text-black border-2 border-black hover:border-black! rounded-sm p-2 px-4 shadow-[2px_2px_0px_rgba(0,0,0,1)]"
         >
           <GearIcon size={24} />
-        </button>
+        </button> */}
       </div>
       {tasks.length === 0 ? (
         <div className="text-center font-black border text-black text-xs rounded-sm flex place-content-center p-2 px-4 mb-2">
