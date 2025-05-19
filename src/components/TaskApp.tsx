@@ -9,6 +9,7 @@ const TaskApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filterType, setFilterType] = useState<string>("all");
   const [category, setCategory] = useState<string>("Categories");
+
   const [isSelectOpen, setSelectOpen] = useState<boolean>(false);
   const [isTaskModalOpen, setTaskModalOpen] = useState<boolean>(false);
 
@@ -32,6 +33,20 @@ const TaskApp = () => {
   // TODO: UI/UX Essentials
   //  [ ] Clear, responsive layout using CSS or a CSS framework (like Tailwind or Material UI)
   //  [ ] Basic styling with status indicators (e.g. strikethrough completed tasks)
+
+  // TODO: Task Filtering and Sorting
+  // [x] Filter tasks: All / Active / Completed
+  // [ ] Sort tasks by due date, category, or priority (if implemented)
+  // [ ] Search tasks by name
+
+  // TODO: Persistence
+  // [ ] Save tasks and categories in localStorage so they persist on refresh
+  // [ ] Option to clear all tasks
+
+  // TODO: Due Dates & Priorities
+  // [ ] Assign a due date to each task
+  // [ ] Set a priority level (e.g. Low, Medium, High)
+  // [ ] Highlight overdue tasks visually
 
   const handleAddTaskFromModal = (task: string) => {
     if (task.trim() === "") return; // Don't add empty strings
@@ -133,6 +148,12 @@ const TaskApp = () => {
                 className="border-b-2 border-b-black hover:bg-green-500 p-1 px-4"
               >
                 Mouse
+              </li>
+              <li
+                onClick={() => {}}
+                className="border-b-2 border-b-black bg-blue-500 text-white p-1 px-4"
+              >
+                Add new category
               </li>
             </ul>
           )}

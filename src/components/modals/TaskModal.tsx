@@ -1,11 +1,11 @@
 import { useState } from "react";
 import TextField from "../form/TextField";
 
-interface ModalProps extends React.PropsWithChildren {
+type ModalProps = {
   onClose: () => void;
   onCancel: () => void;
   onSubmit: (task: string) => void;
-}
+};
 
 const Modal = ({ onClose, onSubmit }: ModalProps) => {
   const [inputValue, setInputValue] = useState<string>("");
