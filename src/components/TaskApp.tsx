@@ -1,12 +1,12 @@
 import type { Task } from "@/types/Task";
 import { useEffect, useState } from "react";
-import shortUUID from "short-uuid";
 import TaskItem from "./TaskItem";
 import { ChevronDownIcon, GearIcon } from "@primer/octicons-react";
 import Modal from "./modals/TaskModal";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
 const TaskApp = () => {
+  const [task, setTask] = useState<Task | undefined>();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filterType, setFilterType] = useState<string>("all");
   const [category, setCategory] = useState<string>("Categories");
@@ -15,8 +15,6 @@ const TaskApp = () => {
   const [isTaskModalOpen, setTaskModalOpen] = useState<boolean>(false);
 
   const [lsTasks, setLSTasks] = useLocalStorage("tasks", "");
-
-  const shortId = shortUUID.generate();
 
   // TODO Task Management
   //  [x] Add a new Task
@@ -38,32 +36,36 @@ const TaskApp = () => {
   //  [ ] Basic styling with status indicators (e.g. strikethrough completed tasks)
 
   // TODO: Task Filtering and Sorting
-  // [x] Filter tasks: All / Active / Completed
-  // [ ] Sort tasks by due date, category, or priority (if implemented)
-  // [ ] Search tasks by name
+  //  [x] Filter tasks: All / Active / Completed
+  //  [ ] Sort tasks by due date, category, or priority (if implemented)
+  //  [ ] Search tasks by name
 
   // TODO: Persistence
-  // [x] Save tasks and categories in localStorage so they persist on refresh
-  // [ ] Option to clear all tasks
+  //  [x] Save tasks and categories in localStorage so they persist on refresh
+  //  [ ] Option to clear all tasks
 
   // TODO: Due Dates & Priorities
-  // [ ] Assign a due date to each task
-  // [ ] Set a priority level (e.g. Low, Medium, High)
-  // [ ] Highlight overdue tasks visually
+  //  [ ] Assign a due date to each task
+  //  [ ] Set a priority level (e.g. Low, Medium, High)
+  //  [ ] Highlight overdue tasks visually
 
-  const handleAddTaskFromModal = (task: string) => {
-    if (task.trim() === "") return; // Don't add empty strings
+  const handleTaskModalSubmit = (task?: Task) => {
+    if (!task) {
+      console.error("no task from submit");
+      return;
+    }
 
-    const newTask: Task = {
-      id: shortId,
-      details: task,
-      created: Date.now(),
-      updated: Date.now(),
-      completed: false,
-    };
+    const taskIndex = tasks.findIndex((tsk) => tsk.id === task.id);
 
-    // setTasks((tasks) => [...tasks, newTask]);
-    setLSTasks((prevTasks: Task[]) => [...prevTasks, newTask]);
+    if (taskIndex > -1) {
+      const updatedTasks = tasks.map((tsk) =>
+        tsk.id === task.id ? { ...tsk, ...task } : tsk
+      );
+
+      setLSTasks(updatedTasks);
+    } else {
+      setLSTasks((prevTasks: Task[]) => [...prevTasks, task]);
+    }
   };
 
   useEffect(() => {
@@ -92,8 +94,17 @@ const TaskApp = () => {
   const handleDeleteTask = (taskId: string) => {
     const updatedTasks = tasks.filter((task) => task.id !== taskId);
 
-    // setTasks(updatedTasks);
     setLSTasks(updatedTasks);
+  };
+
+  const handleEditTask = (task: Task) => {
+    setTask(task);
+    setTaskModalOpen(true);
+  };
+
+  const handleCloseTaskModal = () => {
+    setTaskModalOpen(false);
+    setTask(undefined);
   };
 
   const clearCompletedTasks = () => {
@@ -201,6 +212,7 @@ const TaskApp = () => {
                   key={tsk.id}
                   onUpdateTask={handleUpdateTask}
                   onDeleteTask={handleDeleteTask}
+                  onEditTask={handleEditTask}
                   task={tsk}
                 />
               );
@@ -248,9 +260,10 @@ const TaskApp = () => {
       )}
       {isTaskModalOpen && (
         <Modal
-          onClose={() => setTaskModalOpen(false)}
-          onSubmit={(task) => handleAddTaskFromModal(task)}
-          onCancel={() => setTaskModalOpen(false)}
+          task={task}
+          onClose={() => handleCloseTaskModal()}
+          onSubmit={(task) => handleTaskModalSubmit(task)}
+          onCancel={() => handleCloseTaskModal()}
         />
       )}
     </div>

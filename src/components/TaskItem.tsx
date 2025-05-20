@@ -12,23 +12,21 @@ type TodoItemProps = {
   task: Task;
   onUpdateTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
+  onEditTask: (task: Task) => void;
 };
 
-const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
-  const [editMode, setEditMode] = useState<boolean>(false);
+const TaskItem = ({
+  task,
+  onUpdateTask,
+  onDeleteTask,
+  onEditTask,
+}: TodoItemProps) => {
   const [deleteMode, setDeleteMode] = useState<boolean>(false);
-  const [taskDetails, setTaskDetails] = useState<string>("");
-
   const [checked, setChecked] = useState<boolean>(false);
 
   useEffect(() => {
-    setTaskDetails(task.details);
     setChecked(task.completed);
   }, [task]);
-
-  const handleEditTask = () => {
-    setEditMode((prevState) => !prevState);
-  };
 
   const handleDeleteTask = () => {
     setDeleteMode((prevState) => !prevState);
@@ -39,21 +37,8 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
     setDeleteMode(false);
   };
 
-  const handleEdit = (
-    e:
-      | React.MouseEvent<HTMLButtonElement>
-      | React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if ("key" in e && e.key !== "Enter") return;
-
-    if (taskDetails.trim() !== "" && task.details !== taskDetails) {
-      onUpdateTask({
-        ...task,
-        ...{ details: taskDetails, updated: Date.now() },
-      });
-
-      setEditMode(false);
-    }
+  const handleEdit = () => {
+    onEditTask(task);
   };
 
   const handleToggleCheck = () => {
@@ -65,12 +50,6 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
     });
   };
 
-  // ${
-  //   task.completed
-  //     ? "pointer-events-none opacity-50 bg-zinc-200 border-zinc-600"
-  //     : ""
-  // }
-
   return (
     <li
       key={task.id}
@@ -79,24 +58,7 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
         ${task.completed ? "opacity-50 bg-zinc-200 border-zinc-600" : ""}
       `}
     >
-      {/* ${selected ? "bg-blue-400" : "bg-white"} */}
-      {/* {task.completed && (
-        <hr
-          className={`h-px w-[calc(100%+16px)] border-t-[1px] absolute translate-y-1/2 -ml-4
-          `}
-        />
-      )} */}
       <div className="grow-4">
-        {editMode && (
-          <input
-            type="text"
-            className="border text-black rounded-sm p-1 "
-            value={taskDetails}
-            onKeyDown={handleEdit}
-            onChange={(e) => setTaskDetails(e.target.value)}
-          />
-        )}
-
         {deleteMode && (
           <button
             onClick={handleConfirmDelete}
@@ -106,7 +68,7 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
           </button>
         )}
 
-        {!deleteMode && !editMode && (
+        {!deleteMode && (
           <div className="mr-4 flex items-center">
             <div className="flex items-center cursor-pointer mr-4">
               <input
@@ -129,18 +91,19 @@ const TaskItem = ({ task, onUpdateTask, onDeleteTask }: TodoItemProps) => {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          handleEditTask();
-          handleEdit(e);
+
+          handleEdit();
         }}
         disabled={deleteMode || task.completed}
         className={`disabled:bg-gray-50 border-black hover:border-black! disabled:text-gray-500 disabled:cursor-not-allowed! border-2 mr-2 rounded-sm p-2 hover:bg-indigo-400 active:bg-indigo-600 hover:text-white shadow-[2px_2px_0px_rgba(0,0,0,1)]`}
       >
-        {editMode ? <XIcon size={24} /> : <PencilIcon size={24} />}
+        <PencilIcon size={24} />
       </button>
       <button
-        disabled={editMode || task.completed}
+        disabled={task.completed}
         onClick={(e) => {
           e.stopPropagation();
+
           handleDeleteTask();
         }}
         className={`disabled:bg-gray-50 border-black hover:border-black! disabled:text-gray-500 disabled:cursor-not-allowed! border-2 rounded-sm p-2 text-white bg-red-600 hover:bg-red-800 active:bg-red-400 hover:text-white shadow-[2px_2px_0px_rgba(0,0,0,1)]`}
