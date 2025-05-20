@@ -1,4 +1,4 @@
-import type { Task } from "@/types/Task";
+import type { Task } from "../types/Task";
 import { useEffect, useState } from "react";
 
 import { useLocalStorage } from "./hooks/useLocalStorage";
@@ -75,10 +75,6 @@ const TaskApp = () => {
       setTasks(lsTasks);
     }
   }, [lsTasks]);
-
-  useEffect(() => {
-    console.log("selectedCategory", selectedCategory);
-  }, [selectedCategory]);
 
   const handleUpdateTask = (task: Task) => {
     setLSTasks((prevTasks: Task[]) => {

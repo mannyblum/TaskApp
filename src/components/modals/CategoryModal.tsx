@@ -1,6 +1,6 @@
 import { useState } from "react";
 import TextField from "../form/TextField";
-import type { Category } from "@/types/Category";
+import type { Category } from "../../types/Category";
 
 import shortUUID from "short-uuid";
 

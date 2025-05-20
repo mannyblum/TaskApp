@@ -3,7 +3,7 @@ import { ChevronDownIcon } from "@primer/octicons-react";
 import { useClickOutside } from "./hooks/useOutsideClick";
 
 import CategoryModal from "./modals/CategoryModal";
-import type { Category } from "@/types/Category";
+import type { Category } from "../types/Category";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
 type CategorySelectProps = {

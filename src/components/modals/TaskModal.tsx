@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import TextField from "../form/TextField";
-import type { Task } from "@/types/Task";
+import type { Task } from "../../types/Task";
 import shortUUID from "short-uuid";
 import CategorySelect from "../CategorySelect";
 
