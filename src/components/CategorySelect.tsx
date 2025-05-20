@@ -99,16 +99,15 @@ const CategorySelect = ({
                   </li>
                 );
               })}
-            {!selectOnly ||
-              (lsCategories.length === 0 && (
-                <li
-                  key="addNewCategory"
-                  onClick={() => handleOpenAddCategory()}
-                  className="border-b-2 border-b-black bg-blue-500 text-white p-1 px-4"
-                >
-                  Add new category
-                </li>
-              ))}
+            {(!selectOnly || (selectOnly && lsCategories.length === 0)) && (
+              <li
+                key="addNewCategory"
+                onClick={() => handleOpenAddCategory()}
+                className="border-b-2 border-b-black bg-blue-500 text-white p-1 px-4"
+              >
+                Add new category
+              </li>
+            )}
           </ul>
         </div>
       )}
