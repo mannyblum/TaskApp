@@ -54,8 +54,8 @@ const TaskItem = ({
     <li
       key={task.id}
       className={`relative
-        text-black border border-indigo-900 rounded-sm p-2 mb-2 flex justify-between items-center 
-        ${task.completed ? "opacity-50 bg-zinc-200 border-zinc-600" : ""}
+        text-black border-b-2 border-b-black last:border-b-0 p-2  flex justify-between items-center 
+        ${task.completed ? "opacity-50 bg-zinc-200 " : ""}
       `}
     >
       <div className="grow-4">

@@ -2,6 +2,7 @@ type TextFieldProps = {
   label: string;
   placeholder?: string;
   value: string;
+  autoFocus?: boolean;
   onChange: (val: string) => void;
 };
 

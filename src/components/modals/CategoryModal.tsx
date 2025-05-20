@@ -1,53 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TextField from "../form/TextField";
-import type { Task } from "@/types/Task";
+import type { Category } from "@/types/Category";
+
 import shortUUID from "short-uuid";
 
-type TaskModalProps = {
-  task?: Task;
+type CategoryModalProps = {
   onClose: () => void;
   onCancel: () => void;
-  onSubmit: (task: Task) => void;
+  onSubmit: (category: Category) => void;
 };
 
-const TaskModal = ({ onClose, onSubmit, task }: TaskModalProps) => {
+const CategoryModal = ({ onClose, onSubmit }: CategoryModalProps) => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [isNew, setNew] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (task) {
-      setInputValue(task.details);
-      setNew(false);
-    }
-  }, [task]);
 
   const handleSubmit = () => {
     if (inputValue.trim() === "") return; // Don't add empty strings
 
-    if (isNew) {
-      const shortId = shortUUID.generate();
-      const newTask: Task = {
-        id: shortId,
-        details: inputValue,
-        created: Date.now(),
-        updated: Date.now(),
-        completed: false,
-      };
+    const shortId = shortUUID.generate();
+    const category: Category = {
+      id: shortId,
+      name: inputValue,
+      created: Date.now(),
+      updated: Date.now(),
+    };
 
-      onSubmit(newTask);
-    } else {
-      if (!task) {
-        console.error("No task provided for update.");
-        return;
-      }
-
-      const updatedTask = {
-        ...task,
-        ...{ details: inputValue, updated: Date.now() },
-      };
-
-      onSubmit(updatedTask);
-    }
+    onSubmit(category);
 
     onClose();
   };
@@ -65,14 +42,15 @@ const TaskModal = ({ onClose, onSubmit, task }: TaskModalProps) => {
           <div className="relative shadow-[2px_2px_0px_rgba(0,0,0,1)] bg-white rounded-sm border-2 border-black">
             <div className="flex items-center justify-between py-2 px-6">
               <h3 className="text-xl font-semibold text-gray-900">
-                {isNew ? "Add" : "Edit"} Task
+                Add Category
               </h3>
             </div>
             <TextField
               onChange={(val) => setInputValue(val)}
               value={inputValue}
-              label="Name"
-              placeholder="Task"
+              label="Category"
+              autoFocus={true}
+              placeholder="i.e. Cats"
             />
             <div className="flex justify-end items-center px-6 py-2 pb-4 ">
               <button
@@ -100,4 +78,4 @@ const TaskModal = ({ onClose, onSubmit, task }: TaskModalProps) => {
   );
 };
 
-export default TaskModal;
+export default CategoryModal;
