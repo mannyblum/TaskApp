@@ -85,28 +85,30 @@ const CategorySelect = ({
       {isOpen && (
         <div ref={ref}>
           <ul className="rounded-sm absolute top-3 left-0 bg-white mt-12 z-20 text-black w-full cursor-pointer border-2 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-            {lsCategories.map((category: Category) => {
-              return (
+            {lsCategories &&
+              lsCategories.map((category: Category) => {
+                return (
+                  <li
+                    key={category.id}
+                    onClick={() => handleSelectCategory(category.id)}
+                    className={`border-b-2 border-b-black hover:bg-green-400 ${
+                      activeCategory === category.id ? "bg-green-400" : ""
+                    } p-1 px-4`}
+                  >
+                    {category.name}
+                  </li>
+                );
+              })}
+            {!selectOnly ||
+              (lsCategories.length === 0 && (
                 <li
-                  key={category.id}
-                  onClick={() => handleSelectCategory(category.id)}
-                  className={`border-b-2 border-b-black hover:bg-green-400 ${
-                    activeCategory === category.id ? "bg-green-400" : ""
-                  } p-1 px-4`}
+                  key="addNewCategory"
+                  onClick={() => handleOpenAddCategory()}
+                  className="border-b-2 border-b-black bg-blue-500 text-white p-1 px-4"
                 >
-                  {category.name}
+                  Add new category
                 </li>
-              );
-            })}
-            {!selectOnly && (
-              <li
-                key="addNewCategory"
-                onClick={() => handleOpenAddCategory()}
-                className="border-b-2 border-b-black bg-blue-500 text-white p-1 px-4"
-              >
-                Add new category
-              </li>
-            )}
+              ))}
           </ul>
         </div>
       )}
