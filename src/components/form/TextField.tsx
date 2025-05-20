@@ -23,7 +23,7 @@ const TextField = ({
         placeholder={placeholder}
         value={value}
         onChange={({ target: { value } }) => onChange(value)}
-        className="border-2 border-black w-full rounded-sm py-2 px-1 focus:ring-2 focus:ring-offset-2 focus:ring-black focus:outline-hidden"
+        className="shadow-[2px_2px_0px_rgba(0,0,0,1)] border-2 border-black w-full rounded-sm py-2 px-4 focus:ring-2 focus:ring-offset-2 focus:ring-black focus:outline-hidden"
         {...rest}
       />
     </div>

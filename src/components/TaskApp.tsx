@@ -27,11 +27,11 @@ const TaskApp = () => {
 
   // TODO:  Category Support
   //  [x] Add a new category
-  //  [ ] Assign a task to a category
-  //  [ ] Filter tasks by category
+  //  [x] Assign a task to a category
+  //  [x] Filter tasks by category
 
   // TODO: Basic State Management
-  //  [ ] Use React state (useState, useReducer, or Context) to manage tasks and categories
+  //  [x] Use React state (useState, useReducer, or Context) to manage tasks and categories
 
   // TODO: UI/UX Essentials
   //  [ ] Clear, responsive layout using CSS or a CSS framework (like Tailwind or Material UI)
@@ -131,6 +131,14 @@ const TaskApp = () => {
     setSelectedCategory(categoryId);
   };
 
+  const availableItems = tasks.filter((task) => {
+    if (selectedCategory.length > 0) {
+      return task.categoryId === selectedCategory;
+    }
+
+    return task;
+  });
+
   return (
     <div className="w-6/12 bg-white p-4 rounded-sm shadow-[5px_5px_0px_rgba(0,0,0,1)]">
       <div className="mb-4 flex items-center justify-between">
@@ -152,9 +160,9 @@ const TaskApp = () => {
           <GearIcon size={24} />
         </button> */}
       </div>
-      {tasks.length === 0 ? (
-        <div className="text-center font-black border text-black text-xs rounded-sm flex place-content-center p-2 px-4 mb-2">
-          No tasks
+      {tasks.length === 0 || availableItems.length === 0 ? (
+        <div className="text-center font-black border-2 text-black text-xs rounded-sm flex place-content-center p-2 px-4 mb-4 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+          No tasks Available
         </div>
       ) : (
         <div
@@ -164,6 +172,10 @@ const TaskApp = () => {
           <ul>
             {[...tasks]
               .filter((task) => {
+                if (selectedCategory.length) {
+                  return task.categoryId === selectedCategory;
+                }
+
                 if (filterType === "completed") {
                   return task.completed;
                 }
@@ -190,7 +202,7 @@ const TaskApp = () => {
         </div>
       )}
       {tasks.length > 0 && (
-        <div className="border text-black text-xs rounded-sm flex justify-between items-center p-2 px-4">
+        <div className="border-2 text-black text-xs rounded-sm flex justify-between items-center p-2 px-4 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
           <div>{tasks.filter((task) => !task.completed).length} items left</div>
           <div>
             <ul className="flex gap-4 cursor-pointer">

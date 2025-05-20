@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import TextField from "../form/TextField";
 import type { Task } from "@/types/Task";
 import shortUUID from "short-uuid";
+import CategorySelect from "../CategorySelect";
 
 type TaskModalProps = {
   task?: Task;
@@ -13,10 +14,12 @@ type TaskModalProps = {
 const TaskModal = ({ onClose, onSubmit, task }: TaskModalProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setNew] = useState<boolean>(true);
+  const [category, setCategory] = useState<string>("");
 
   useEffect(() => {
     if (task) {
       setInputValue(task.details);
+      setCategory(task.categoryId);
       setNew(false);
     }
   }, [task]);
@@ -32,6 +35,7 @@ const TaskModal = ({ onClose, onSubmit, task }: TaskModalProps) => {
         created: Date.now(),
         updated: Date.now(),
         completed: false,
+        categoryId: category,
       };
 
       onSubmit(newTask);
@@ -43,13 +47,17 @@ const TaskModal = ({ onClose, onSubmit, task }: TaskModalProps) => {
 
       const updatedTask = {
         ...task,
-        ...{ details: inputValue, updated: Date.now() },
+        ...{ details: inputValue, updated: Date.now(), categoryId: category },
       };
 
       onSubmit(updatedTask);
     }
 
     onClose();
+  };
+
+  const handleSelectCategory = (cat: string) => {
+    setCategory(cat);
   };
 
   return (
@@ -74,6 +82,14 @@ const TaskModal = ({ onClose, onSubmit, task }: TaskModalProps) => {
               label="Name"
               placeholder="Task"
             />
+            <div className="py-2 px-6 pb-4 flex flex-col">
+              <CategorySelect
+                full
+                selectOnly
+                categoryId={category}
+                onSelectCategory={(cat) => handleSelectCategory(cat)}
+              />
+            </div>
             <div className="flex justify-end items-center px-6 py-2 pb-4 ">
               <button
                 data-modal-hide="static-modal"

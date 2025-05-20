@@ -4,4 +4,5 @@ export type Task = {
   created: number;
   updated: number;
   completed: boolean;
+  categoryId: string;
 };
