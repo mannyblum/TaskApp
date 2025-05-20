@@ -140,7 +140,7 @@ const TaskApp = () => {
   });
 
   return (
-    <div className="w-6/12 bg-white p-4 rounded-sm shadow-[5px_5px_0px_rgba(0,0,0,1)]">
+    <div className="w-[500px] bg-white p-4 rounded-sm shadow-[5px_5px_0px_rgba(0,0,0,1)]">
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={handleOpenTaskModal}
